@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>画面モックの説明</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.doc h2{font-size:19px;margin:6px 0 10px}
+.doc h3{font-size:16px;margin:16px 0 6px}
+.doc p,.doc li{font-size:15px}
+.doc table{border-collapse:collapse;width:100%;font-size:14px}
+.doc th,.doc td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+.doc th{background:#f0f2f5;font-weight:600;white-space:nowrap}
+.tw{overflow-x:auto}
+.tw table{min-width:620px}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.toc a{font-size:14px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:4px 12px;text-decoration:none}
+.flowdoc{counter-reset:s;list-style:none;padding:0;margin:0}
+.flowdoc li{counter-increment:s;padding:8px 0 8px 40px;position:relative;border-bottom:1px solid var(--line)}
+.flowdoc li::before{content:counter(s);position:absolute;left:4px;top:8px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;text-align:center;font-weight:700;line-height:26px;font-size:14px}
+.ver{white-space:nowrap;font-weight:700}
+.wf svg.wfs{width:130px;height:49px;display:block}
+.wf2{display:flex;gap:10px;flex-wrap:wrap}
+.wf2 figure{margin:0}
+.wf2 figcaption{font-size:12px;color:var(--sub);text-align:center}
+.wft td{vertical-align:middle}
+.tw table.wft{min-width:600px}
+.wft td:first-child{white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="mockbar">見本・架空のデータ　<a href="index.html">画面へ戻る</a></div>
+<main class="doc">
+<h2 style="font-size:21px">画面モックの説明</h2>
+<div class="toc"><a href="#about">この見本について</a><a href="#flow">使い方</a><a href="#screens">各画面</a><a href="#rules">判定基準表（抜粋）</a><a href="#ask">見ていただきたい点</a><a href="#log">変更の記録</a></div>
+
+<section class="card" id="about">
+<h2>この見本について</h2>
+<p>透析施設で患者さんの足を観察し、医師が決めた区分（A〜E）に沿って基幹病院へ相談・紹介するための画面の見本です。中身は、福岡大学病院 形成外科の研究で用いる判定基準表（案v2.3、令和8年10月29日）と連携の手順に沿っています。</p>
+<ul>
+<li>研究のための画面の見本です。診療の指針として使うものではありません。判定基準表は案で、今後変わることがあります。</li>
+<li>データはすべて架空です。入力した内容は、どこにも送信・保存されません。ページを読み込み直すと最初の状態に戻ります。</li>
+<li>写真は撮りません。写真の枠を押すと「撮った」状態になるだけです。</li>
+<li>日付は、見本のため 11月16日に固定しています。</li>
+<li><b>この記録システムは、区分を自動で出しません。</b>入力した所見から区分の候補を出したり、区分に応じて次の対応を表示したり、所見をもとに知らせたりもしません（判定基準表 第1章）。区分を決めるのは医師で、相談・紹介をするかどうかは主治医が通常の診療として判断します。</li>
+</ul>
+</section>
+
+<section class="card" id="flow">
+<h2>使い方</h2>
+<p>次の順に使います。かっこの中は、その作業をする画面の名前です。</p>
+<ol class="flowdoc">
+<li><b>透析施設のスタッフ</b>が、足の写真・所見・ドプラ波形を入力する（入力）</li>
+<li><b>施設の医師</b>が、所見を見て血流（V）・創傷（W）・背景リスク（B）を判定し、区分 A〜E を選ぶ（判定）</li>
+<li>皮膚欠損以上の創と感染は、<b>福岡大学病院の研究責任者</b>が写真と所見を見て確認する（福大の確認）</li>
+<li>相談・紹介をしたら、その日付・紹介先・受診日・転帰を残す（相談・紹介）</li>
+<li>次の観察の予定日を、施設ごとの一覧で確かめる（一覧）</li>
+</ol>
+</section>
+
+<section class="card" id="screens">
+<h2>各画面</h2>
+<h3>一覧</h3>
+<p>上の4つの数字（今日の観察、予定日を過ぎた、医師の判定待ち、福大の確認待ち）を押すと、その項目に当てはまる方だけを表示します。カードの左の色は区分、棒の数は観察の頻度（1本＝月1回、2本＝2週に1回、3本＝週1回、4本＝透析日ごと）です。氏名は出さず、研究用IDで管理します。カードを押すと、区分の推移と相談・紹介の記録が見られます。</p>
+<h3>入力（スタッフ）</h3>
+<p>写真 → 皮膚・傷 → 感染 → 血流 → 緊急 の順に進みます。写真から血流までは、右足と左足を切り替えて入力します。入力のある足には緑の印がつきます。この画面では所見だけを記録し、区分は出しません。</p>
+<ul>
+<li><b>皮膚・傷</b>：ボタンの色は病変の種類を表します（黄＝傷のない病変、橙＝皮膚欠損と潰瘍の前段階、赤茶＝壊死、紫＝深部への広がり）。色は重症度の判定ではありません。</li>
+<li><b>感染</b>：発赤・熱感・腫脹（硬結を含む）・圧痛（疼痛を含む）・膿性の排液のうち、当てはまるものを押します。画面の丸の数は、当てはまった所見の数です。発赤の範囲は、傷のふちからの距離で選びます。そのほか、脆弱な肉芽、ポケット形成、悪臭、治癒の停滞もあわせて記録します（透析患者は発熱しにくく、全身の炎症所見に頼れないため）。</li>
+<li><b>血流</b>：血流は、登録時と、変化があったとき（新しい創、創の悪化、冷感・安静時痛の出現）に測ります。区分C以上の方は、これに加えて月1回測ります。毎回の観察には含めません。測る日は「今日は測る」をオンにし、透析開始から何分の時点で測ったかを記録します。測るのは透析開始の早い時点、除水が進む前です。足背動脈と後脛骨動脈のそれぞれで、波形の絵に近いものを選びます。波形の「4」（さざ波・定常波、または無音）は、ドプラを当てた場合にだけ選びます。当てていないときは「未測定」を選びます。触知（＋・－・？）は記録しますが、血流の判定には使いません。</li>
+<li><b>緊急</b>：赤い枠（T1〜T3）に当てはまるときは、入力を終えるのを待たずに、直ちに救急要請します。専門医療機関への連絡は並行して行います。橙（T4〜T11）は、当日中に専門医療機関へ連絡する目安です。区分に関わらず気になることがあれば、メモに書くか、その場で専門医に相談できます。</li>
+</ul>
+<h3>判定（施設の医師）</h3>
+<p>入力された所見を見て、左右の足ごとに V と W を、患者ごとに B と感染の有無を選び、そのうえで区分 A〜E を選びます。「判定基準表」のボタンで、V と W の組み合わせの表と、観察の頻度の表を開けます。表は参考で、区分は医師が選びます。次回の観察予定日も医師が入れます。判定基準表の手順と違う区分や観察予定日にするときは、医学的な理由を書きます。W2 以上か感染ありのときと、W2 以上だった方の区分を下げるときは、保存した記録が「福大の確認待ち」の一覧に入ります。</p>
+<h3>福大の確認（研究責任者）</h3>
+<p>研究責任者が、次の3つを写真と所見で確認します。皮膚欠損以上（W2 以上）の創、感染、W2 以上だった方の区分を下げる判定です。施設の判定と一致すれば「一致」、異なるときは「異なる」を選び、施設と協議して確定した区分を入れます。確定した日から新しい区分を適用します。</p>
+<h3>相談・紹介</h3>
+<p>どの相談・紹介の目安に当てはまったか、相談した日、相談先・紹介先、受診日、転帰を残します。相談・紹介をするかどうかは主治医が通常の診療として判断し、この画面には行った相談・紹介を記録します。記録は「相談 → 受診 → 転帰」の3つの丸で表し、済んだところに色がつきます。</p>
+</section>
+
+<section class="card" id="rules">
+<h2>判定基準表（抜粋）</h2>
+<p class="sub">判定基準表 案v2.3 からの抜粋です。研究のための案で、診療の指針として使うものではありません。</p>
+<h3>血流（V）：ドプラ波形</h3>
+<p class="sub">模式図は2拍分です。点線は流速0の線で、上が順方向の血流、下が逆流です。実際の波形の形・高さとは異なります。</p>
+<div class="tw"><table class="wft"><tr><th>記録</th><th>波形</th><th>模式図</th><th>V</th></tr>
+<tr><td>0</td><td>三相性</td><td class="wf"><svg class="wfs" viewBox="0 0 150 56" role="img" aria-label="三相性の模式図"><line x1="2" y1="36" x2="148" y2="36" stroke="#c3cad3" stroke-width="1" stroke-dasharray="3 3"/><path d="M4 36 L10 36 L15 6 L21 48 L27 29 L33 36 L74 36 L80 36 L85 6 L91 48 L97 29 L103 36 L144 36" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg></td><td>V0</td></tr>
+<tr><td>1</td><td>二相性</td><td class="wf"><svg class="wfs" viewBox="0 0 150 56" role="img" aria-label="二相性の模式図"><line x1="2" y1="36" x2="148" y2="36" stroke="#c3cad3" stroke-width="1" stroke-dasharray="3 3"/><path d="M4 36 L10 36 L15 6 L21 48 L27 36 L74 36 L80 36 L85 6 L91 48 L97 36 L144 36" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg></td><td>V1</td></tr>
+<tr><td>2</td><td>単相性（鋭い）</td><td class="wf"><svg class="wfs" viewBox="0 0 150 56" role="img" aria-label="単相性・鋭いの模式図"><line x1="2" y1="36" x2="148" y2="36" stroke="#c3cad3" stroke-width="1" stroke-dasharray="3 3"/><path d="M4 34 L10 34 L15 8 Q20 27 34 31 Q54 34 74 34 L80 34 L85 8 Q90 27 104 31 Q124 34 144 34" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg></td><td>V2</td></tr>
+<tr><td>3</td><td>単相性（鈍い）</td><td class="wf"><svg class="wfs" viewBox="0 0 150 56" role="img" aria-label="単相性・鈍いの模式図"><line x1="2" y1="36" x2="148" y2="36" stroke="#c3cad3" stroke-width="1" stroke-dasharray="3 3"/><path d="M4 34 Q26 12 44 27 Q59 33 74 33 Q96 12 114 27 Q129 33 144 33" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg></td><td>V2</td></tr>
+<tr><td>4</td><td>さざ波・定常波、または信号が得られない（無音）</td><td class="wf"><div class="wf2"><figure><svg class="wfs" viewBox="0 0 150 56" role="img" aria-label="さざ波の模式図"><line x1="2" y1="36" x2="148" y2="36" stroke="#c3cad3" stroke-width="1" stroke-dasharray="3 3"/><path d="M4 34 Q9 32 14 34Q19 35 24 34Q29 32 34 34Q39 35 44 34Q49 32 54 34Q59 35 64 34Q69 32 74 34 Q79 32 84 34Q89 35 94 34Q99 32 104 34Q109 35 114 34Q119 32 124 34Q129 35 134 34Q139 32 144 34" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg><figcaption>さざ波・定常波</figcaption></figure><figure><svg class="wfs" viewBox="0 0 150 56" role="img" aria-label="無音の模式図"><line x1="2" y1="36" x2="148" y2="36" stroke="#c3cad3" stroke-width="1" stroke-dasharray="3 3"/><line x1="4" y1="36" x2="146" y2="36" stroke="var(--accent)" stroke-width="2.4" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg><figcaption>無音</figcaption></figure></div></td><td>手技を確かめて記録し直し、なお 4 であれば V2</td></tr>
+<tr><td>判読不能</td><td>当てたが、技術的な理由で判断できない</td><td class="wf"><svg class="wfs" viewBox="0 0 150 56" role="img" aria-label="判読不能の模式図"><line x1="2" y1="36" x2="148" y2="36" stroke="#c3cad3" stroke-width="1" stroke-dasharray="3 3"/><polyline points="4,36 12,30 17,41 23,18 28,44 36,33 41,39 47,24 55,43 61,31 68,37 74,14 80,46 88,28 94,40 101,22 108,42 115,32 121,38 128,20 135,45 141,30 146,36" stroke="#8a94a3" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></td><td>Vx。記録し直す</td></tr>
+<tr><td>未測定</td><td>ドプラを当てていない</td><td class="wf"><svg class="wfs" viewBox="0 0 150 56" role="img" aria-label="未測定"><rect x="20" y="10" width="110" height="36" rx="6" fill="none" stroke="#a0a8b4" stroke-width="1.6" stroke-dasharray="4 4"/><text x="75" y="33" text-anchor="middle" font-size="13" fill="#7a8494">測っていない</text></svg></td><td>Vx（V1 として扱う）。血流の評価を予定に入れる。緊急の扱いにはしない</td></tr></table></div>
+<p>2本の動脈のうち、悪い方の V をその肢の V とします。ABI 0.9 未満は、波形が三相でも V1 以上とします。ABI 1.3 超または測定不能（中膜石灰化）のときは、ABI を用いず、波形だけで判定します。</p>
+<h3>創傷（W）</h3>
+<div class="tw"><table><tr><th></th><th>条件</th></tr>
+<tr><td>W0</td><td>異常なし</td></tr>
+<tr><td>W1</td><td>皮膚欠損のない足病変（白癬、胼胝、鶏眼、巻き爪・陥入爪、乾燥・浅い亀裂）</td></tr>
+<tr><td>W2</td><td>皮膚欠損（深い亀裂を含む）、または潰瘍の前段階の病変（胼胝下出血、黒点、血腫、水疱）</td></tr>
+<tr><td>W3d</td><td>乾性壊死（安定した乾性壊疽）</td></tr>
+<tr><td>W3w</td><td>湿性壊死、または感染徴候を伴う創</td></tr>
+<tr><td>W4</td><td>深部感染（創縁から2 cm 以上の発赤、または腱・筋・関節・骨への波及）、骨髄炎の疑い（ソーセージ様の趾、2週以上治らない趾の腫脹、骨・関節が見える）</td></tr></table></div>
+<p>感染徴候は、発赤、熱感、腫脹・硬結、圧痛・疼痛、膿性の排液のうち 2つ以上で「あり」とします。</p>
+<h3>区分：血流（V）と創傷（W）の組み合わせ</h3>
+<div class="tw"><table class="mx"><tr><th></th><th>W0</th><th>W1</th><th>W2</th><th>W3d</th><th>W3w</th><th>W4</th></tr>
+<tr><th>V0</th><td><span class="cat A">A</span></td><td><span class="cat A">A</span></td><td><span class="cat C">C</span></td><td><span class="cat C">C</span></td><td><span class="cat E">E</span></td><td><span class="cat E">E</span></td></tr>
+<tr><th>V1</th><td><span class="cat A">A</span></td><td><span class="cat B">B</span></td><td><span class="cat C">C</span></td><td><span class="cat C">C</span></td><td><span class="cat E">E</span></td><td><span class="cat E">E</span></td></tr>
+<tr><th>V2</th><td><span class="cat B">B</span></td><td><span class="cat B">B</span></td><td><span class="cat D">D</span></td><td><span class="cat D">D</span></td><td><span class="cat E">E</span></td><td><span class="cat E">E</span></td></tr>
+<tr><th>Vx</th><td><span class="cat A">A</span></td><td><span class="cat B">B</span></td><td><span class="cat C">C</span></td><td><span class="cat C">C</span></td><td><span class="cat E">E</span></td><td><span class="cat E">E</span></td></tr></table></div>
+<h3>表とあわせて使う規則</h3>
+<ul>
+<li>緊急の所見（T4〜T11）は、表に関わらず区分 E（当日中に連絡）</li>
+<li>救急要請の所見（T1〜T3）は、区分とは別に直ちに救急要請。区分 A の方にも当てはまる</li>
+<li>B3（潰瘍・切断の既往、血行再建歴）の方は区分 B 以上</li>
+<li>V2 は、W に関わらず 14日以内に血流を精査。V2 かつ W2 以上は 14日以内に専門医が診察</li>
+<li>前回まで W2 以下だった方が、その日 W3 以上になったら、その日のうちに専門医療機関へ連絡</li>
+<li>気になる所見は、区分・頻度に関わらず、担当者の判断でその場で専門医に相談できる</li>
+</ul>
+<h3>緊急の所見</h3>
+<div class="tw"><table><tr><th></th><th>所見</th><th>対応</th></tr>
+<tr><td>T1</td><td>急速に進む発赤・腫脹・激痛、血疱、皮下気腫、捻髪音</td><td rowspan="3">直ちに救急要請</td></tr>
+<tr><td>T2</td><td>突然の疼痛・蒼白・冷感・感覚異常・運動麻痺・脈拍の消失、またはドプラ音の新たな消失</td></tr>
+<tr><td>T3</td><td>悪寒戦慄と創部の所見、意識の変化、血圧の低下</td></tr>
+<tr><td>T4</td><td>創のない片側の発赤・腫脹・熱感</td><td rowspan="8">区分 E。当日中に連絡し、当日〜翌日に受診</td></tr>
+<tr><td>T5</td><td>痛みを伴う網状皮斑、皮下硬結（腎臓内科へも同時に連絡）</td></tr>
+<tr><td>T6</td><td>ソーセージ様の趾、2週以上治らない趾の腫脹、骨・関節が見える</td></tr>
+<tr><td>T7</td><td>湿性壊疽の拡大・悪臭、創の急な拡大</td></tr>
+<tr><td>T8</td><td>創部からの出血（抗凝固療法の下で止血しにくい）</td></tr>
+<tr><td>T9</td><td>低温熱傷（湯たんぽ、こたつ、電気毛布、電気あんか）</td></tr>
+<tr><td>T10</td><td>趾の急な暗紫色の変化（blue toe）</td></tr>
+<tr><td>T11</td><td>装具・ギプスの装着後に新たに出た発赤</td></tr></table></div>
+<h3>観察の頻度と、相談・紹介の目安</h3>
+<div class="tw"><table><tr><th>区分</th><th>観察の頻度（許容幅）</th><th>相談・紹介の目安</th></tr>
+<tr><td><span class="cat A">A</span></td><td>月1回（±7日。施設の定例のフットチェックの日に行う）</td><td>―</td></tr>
+<tr><td><span class="cat B">B</span></td><td>2週に1回（±3日）</td><td>区分が変わったときに相談</td></tr>
+<tr><td><span class="cat C">C</span></td><td>週1回（±2日）</td><td>観察のたびに所見を共有</td></tr>
+<tr><td><span class="cat D">D</span></td><td>透析日ごと</td><td>観察のたびに共有し、外来へ紹介</td></tr>
+<tr><td><span class="cat E">E</span></td><td>―</td><td>当日中に連絡し、当日〜翌日に受診</td></tr></table></div>
+<p class="sub">観察の頻度は下限です。施設でこれまでこれより多く観察していた場合は、回数を減らしません。</p>
+</section>
+
+<section class="card" id="ask">
+<h2>見ていただきたい点</h2>
+<ul>
+<li>入力の項目に、過不足はありますか。普段の観察の流れで入れられますか</li>
+<li>1人あたり、どのくらいの時間で入力できそうですか</li>
+<li>入力したあと、次に何をすればよいかが分かりますか</li>
+<li>あれば助かる機能、なくてよい項目はありますか</li>
+</ul>
+</section>
+
+<section class="card" id="log">
+<h2>変更の記録</h2>
+<p>判定基準表とこの画面を、どなたのご意見を受けて、どう直してきたかを記録しています。</p>
+<div class="tw"><table>
+<tr><th>時期</th><th>ご意見をくださった方</th><th>直したこと</th></tr>
+<tr><td class="ver">2026年9月8日</td><td>形成外科の医師</td>
+<td>判定基準表 v1（10月13日）<br>・当日中に連絡する区分を E の1つにし、救急要請（T1〜T3）は区分とは別にした<br>・W3 以上に悪化した日の連絡を規則に入れた<br>・「無音」と「未測定」を分け、未測定は緊急にしない<br>・SPP との読み替え表を加えた</td></tr>
+<tr><td class="ver">2026年10月14日</td><td>循環器内科の医師</td>
+<td>判定基準表 v2（10月16日）<br>・波形の「4」の扱いを決めた<br>・石灰化で ABI が使えない足の V0 の条件を決めた<br>・ABI 正常で SPP が低い例を見逃しうることは、研究の限界として報告することにした</td></tr>
+<tr><td class="ver">2026年10月16日</td><td>腎臓内科の医師（透析施設の事情）</td>
+<td>判定基準表 v2.1（10月16日）<br>・ドプラは登録時と変化時、区分C以上は月1回とし、毎回の観察から外した<br>・透析開始の早い時点に測り、測った時点を記録することにした<br>・区分 A は施設の定例のフットチェックの日に行うことにした</td></tr>
+<tr><td class="ver">2026年10月29日</td><td>倫理委員会事務局</td>
+<td>判定基準表 v2.3（10月29日）<br>・ケアの例を別の資料に分け、表は観察の頻度と相談・紹介の目安だけにした<br>・研究責任者が記録システム上で写真と所見を見て確認し、結果を入力することにした</td></tr>
+<tr><td class="ver">2026年11月9日</td><td>―</td>
+<td>画面の見本の第1版を作った（判定基準表 案v2.3 に沿って）。上の変更は、入力画面の「未測定」「今日は測る」「透析開始から何分」と、判定画面の「福大の確認へ」に反映した</td></tr>
+</table></div>
+<p class="sub">これから施設で見ていただいたご意見と、それを受けて直した点を、この表に足していきます。</p>
+</section>
+</main>
+</body>
+</html>
