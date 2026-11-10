@@ -152,7 +152,7 @@ function vList(){
   const list=S.pts.filter(p=>!f||(f==='today'&&p.next===TODAY)||(f==='late'&&p.next<TODAY)||(f==='wait'&&p.pend)||(f==='hub'&&p.hub==='待'))
     .sort((a,b)=>(a.next||'').localeCompare(b.next||''));
   const tile=(k,n,t,cls)=>`<div class="tile ${cls} ${f===k?'on':''}" data-a="filter" data-v="${k}"><b>${n}</b><span>${t}</span></div>`;
-  return `<div class="tiles">${tile('today',cnt.today,'今日の観察','today')}${tile('late',cnt.late,'予定日を過ぎた','late')}${tile('wait',cnt.wait,'医師の判定待ち','wait')}${tile('hub',cnt.hub,'福大の確認待ち','wait')}</div>
+  return `<div class="tiles">${tile('today',cnt.today,'今日の観察','today')}${tile('late',cnt.late,'予定日を過ぎた','late')}${tile('wait',cnt.wait,'主治医の判定待ち','wait')}${tile('hub',cnt.hub,'福大の確認待ち','wait')}</div>
   <div class="pgrid">${list.map(p=>`<a class="pcard ${p.cat||''}" href="#patient/${p.id}">
       <div class="top"><span class="id">${p.id}</span>${cat(p.cat)}</div>
       <div class="sub">${FAC[p.fac]}</div>
@@ -250,7 +250,7 @@ function obsView(o){
 function vDone(id){
   const p=P(id); if(!p||!p.pend) return vList();
   return `<div class="card done"><div class="ck">${ICON.check}</div><h2 style="justify-content:center">記録しました</h2>
-    <div class="flow"><span class="past">入力</span>${ICON.arrow}<span class="now">医師の判定</span>${ICON.arrow}<span>区分・次回の予定</span></div>
+    <div class="flow"><span class="past">入力</span>${ICON.arrow}<span class="now">主治医の判定</span>${ICON.arrow}<span>区分・次回の予定</span></div>
     <div class="bar" style="justify-content:center"><a class="btn ghost" href="#list">一覧へ</a><a class="btn" href="#doctor/${p.id}">判定へ（見本の流れ）</a></div></div>
     <div class="card">${obsView(p.pend)}</div>`;
 }
