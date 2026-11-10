@@ -181,9 +181,9 @@ function vPatient(id){
   const p=P(id); if(!p) return vList();
   return `<h2>${p.id} ${cat(p.cat,true)} <span class="sub">${FAC[p.fac]}　${p.B||''}</span></h2>
   <div class="bar" style="margin:0 0 14px;justify-content:flex-start"><a class="btn" href="#input/${p.id}">${ICON.cam.replace('<svg','<svg width="20" height="20"')} 観察を入力</a><a class="btn ghost" href="#referral/${p.id}">相談・紹介</a></div>
-  ${S.care&&p.cat?careCard(p):''}
   <div class="card"><div class="lbl" style="margin-top:0">区分の推移</div>${chart(p)}</div>
-  <div class="card"><div class="lbl" style="margin-top:0">相談・紹介</div>${p.refs.length?p.refs.map(refTl).join('<hr style="border:none;border-top:1px solid var(--line)">'):'<p class="sub">なし</p>'}</div>`;
+  <div class="card"><div class="lbl" style="margin-top:0">相談・紹介</div>${p.refs.length?p.refs.map(refTl).join('<hr style="border:none;border-top:1px solid var(--line)">'):'<p class="sub">なし</p>'}</div>
+  ${S.care&&p.cat?careCard(p):''}`;
 }
 
 function careCard(p){
