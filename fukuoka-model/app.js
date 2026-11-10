@@ -23,6 +23,30 @@ const STEPS = ['写真','皮膚・傷','感染','血流','緊急'];
 const REF_KIND = ['当日連絡','14日以内 精査','14日以内 診察','W3以上に悪化','気になる所見','主治医の判断'];
 const OUTCOME = ['受診予定','外来で経過観察','入院','血行再建','切断','受診せず','その他'];
 
+/* 一般診療でのケアの例（参考）。研究では定めず、研究期間中は表示しない。
+   出典：一般診療でのケアの例（参考資料）（A〜D は前の区分に加えて行う） */
+const CARE_LABEL = 'ケアの例';
+const CARE = {
+  A:{do:['視診','触診','写真','セルフケアの指導','履物の確認','保湿'],
+     no:['LOPS のある方に湯たんぽ・こたつ・電気毛布・電気あんかを使わせない','市販の角質除去剤・スピール膏・魚の目取りを使わせない']},
+  B:{do:['爪・胼胝のケア（施設で行える場合。行えない場合は専門医に相談）','白癬の治療の確認','免荷・履物の見直し'],
+     no:['V2 または LOPS のある方には、専門職でない人が刃物のケア（胼胝削り、鋭匙でのデブリードマン、深い爪切り）をしない','趾間をふやかす足浴をしない','虚血肢・ABI/SPP 未確認の肢に圧迫療法をしない']},
+  C:{do:['創処置（専門医の指示の下）','定点での写真撮影','感染徴候の確認','免荷'],
+     no:['乾性壊死（W3d）に湿潤療法をしない・浸さない','血行再建前の乾性壊疽をデブリードマンしない','感染創・湿性壊疽の足浴をしない','感染創に密閉性のドレッシングを貼らない']},
+  D:{do:['処置内容の記録','全身状態の確認','血流評価の依頼'],
+     no:['創のない足部に発赤・腫脹・熱感があるとき、免荷しないまま様子を見ない（急性シャルコー足では免荷が最優先）','カルシフィラキシスを疑う創を安易にデブリードマンしない']},
+  E:{do:['応急処置','清潔保持','バイタルサインの確認（T1〜T3 の有無）'],
+     no:['施設で切開・デブリードマンをしない']}
+};
+const CARE_B = [  // [背景リスクの下限, 当てはまる条件, ケアの例]
+  [0,'全員','透析中の踵の除圧（円座・ドーナツ枕は使わない）'],
+  [1,'LOPS あり','熱傷予防の指導（湯たんぽ・こたつ・電気毛布・電気あんかを使わない）、裸足で歩かない、毎日の自己観察の指導'],
+  [1,'PAD あり、または Vx','年1回以上の血流評価（ドプラ、ABI、SPP）'],
+  [2,'足変形あり','履物・インソールの評価、義肢装具士への相談'],
+  [3,'潰瘍・切断の既往','免荷装具の適合の確認、再発しやすい部位の重点観察、症状がなくても3か月に1回は写真で専門医と共有'],
+  [3,'血行再建歴','年1回以上の血流評価と、開存の確認']
+];
+
 /* ---------- 架空のデータ ---------- */
 function seed(){
   const h=(date,cat,by,vw)=>({date,cat,by,vw});
@@ -35,17 +59,46 @@ function seed(){
       hist:[h('2026-10-07','C','D-B01',''),h('2026-11-14','D','D-B01','左 V2W2')],pend:null,obs:demoObs(),
       refs:[{kind:'14日以内 診察',date:'2026-11-14',to:'福岡大学病院 形成外科',visit:'2026-11-19',outcome:'受診予定'}]},
     {id:'FK-02-004',fac:'B',cat:'B',B:'B1',last:'2026-10-26',next:'2026-11-09',hub:null,hist:[h('2026-10-07','B','D-B01','')],pend:null,obs:null,refs:[]},
-    {id:'FK-02-009',fac:'B',cat:null,B:null,last:null,next:'2026-11-16',hub:null,hist:[],pend:null,obs:null,refs:[]}
+    {id:'FK-02-009',fac:'B',cat:null,B:null,last:null,next:'2026-11-16',hub:null,hist:[],pend:null,obs:null,refs:[]},
+    /* 判定待ち（今日の入力が済み、施設の医師の判定を待つ） */
+    {id:'FK-01-015',fac:'A',cat:'B',B:'B1',last:'2026-11-16',next:'2026-11-16',hub:null,
+      hist:[h('2026-10-05','B','D-A01','')],
+      pend:ob('FK-01-015','2026-11-16',false,{ph:[0,1]},{w:['胼胝'],ph:[0,1]}),obs:null,refs:[]},
+    {id:'FK-01-018',fac:'A',cat:'C',B:'B2',last:'2026-11-16',next:'2026-11-16',hub:'済',
+      hist:[h('2026-10-05','B','D-A02',''),h('2026-10-19','C','D-A02','左 V1W2')],
+      pend:ob('FK-01-018','2026-11-16',true,{dp:'1',pt:'1',ph:[0,1]},{w:['皮膚欠損'],inf:['発赤','熱感','腫脹'],red:1,infx:['脆弱な肉芽'],dp:'1',pt:'2',ph:[0,1,2,9]},[],'左第1趾の傷のまわりが赤く、熱い。先週より腫れている'),
+      obs:null,refs:[{kind:'気になる所見',date:'2026-10-19',to:'福岡大学病院 形成外科',visit:'',outcome:'外来で経過観察'}]},
+    {id:'FK-02-006',fac:'B',cat:'D',B:'B3',last:'2026-11-16',next:'2026-11-16',hub:'済',
+      hist:[h('2026-10-07','C','D-B02','右 V2W1'),h('2026-10-28','D','D-B02','右 V2W3d')],
+      pend:ob('FK-02-006','2026-11-16',true,{w:['乾性壊死'],dp:'3',pt:'4',ph:[0,1,2,9]},{dp:'2',pt:'2',ph:[0,1]},[],'右第2趾の先の黒い部分。範囲は前回と同じ'),
+      obs:null,refs:[{kind:'14日以内 精査',date:'2026-10-28',to:'福岡大学病院 循環器内科',visit:'2026-11-06',outcome:'血行再建'}]},
+    /* 福大の確認待ち */
+    {id:'FK-02-011',fac:'B',cat:'C',B:'B1',last:'2026-11-12',next:'2026-11-19',hub:'待',
+      hist:[h('2026-10-07','B','D-B01',''),h('2026-11-12','C','D-B01','左 V1W2')],pend:null,
+      obs:ob('FK-02-011','2026-11-12',false,{ph:[0,1]},{w:['水疱'],dp:null,pt:null,ph:[0,1,2]}),refs:[]},
+    /* 区分 E のあと、入院を経て C に */
+    {id:'FK-03-005',fac:'C',cat:'C',B:'B2',last:'2026-11-10',next:'2026-11-17',hub:'済',
+      hist:[h('2026-10-06','A','D-C01',''),h('2026-10-28','E','D-C01','右 T4'),h('2026-11-10','C','D-C01','右 V1W2')],pend:null,obs:null,
+      refs:[{kind:'当日連絡',date:'2026-10-28',to:'福岡大学病院 形成外科',visit:'2026-10-29',outcome:'入院'}]},
+    /* 福大の確認で一致し、C から B へ */
+    {id:'FK-01-021',fac:'A',cat:'B',B:'B1',last:'2026-11-09',next:'2026-11-23',hub:'済',
+      hist:[h('2026-10-05','B','D-A01',''),h('2026-10-19','C','D-A01','左 V0W2'),h('2026-11-09','B','D-A01','左 V0W1')],pend:null,obs:null,refs:[]},
+    {id:'FK-03-002',fac:'C',cat:'A',B:'B0',last:'2026-10-20',next:'2026-11-17',hub:null,hist:[h('2026-10-06','A','D-C01','')],pend:null,obs:null,refs:[]},
+    {id:'FK-03-008',fac:'C',cat:'B',B:'B1',last:'2026-10-29',next:'2026-11-12',hub:null,hist:[h('2026-10-06','A','D-C02',''),h('2026-10-29','B','D-C02','右 V1W1')],pend:null,obs:null,refs:[]}
   ];
+}
+function ob(pid,date,mv,R,L,t=[],memo=''){
+  const f=x=>Object.assign(limb(),{ok:!((x.w||[]).length||(x.inf||[]).length)},x);  // ok＝異常なし
+  return {pid,date,mv,t,memo,R:f(R),L:f(L)};
 }
 function limb(){return {ok:false,w:[],inf:[],infx:[],red:0,dp:null,pt:null,abi:'',ph:[]};}
 function newObs(p){return {pid:p.id,date:TODAY,mv:!p.cat||p.cat>='C',t:[],memo:'',R:limb(),L:limb()};}
 function demoObs(){const o={pid:'FK-02-001',date:'2026-11-14',mv:true,t:[],memo:'',R:limb(),L:limb()};
   o.R.ok=true;o.R.dp='1';o.R.pt='1';o.L.w=['皮膚欠損'];o.L.inf=['発赤'];o.L.dp='2';o.L.pt='3';o.L.ph=[0,1,2];return o;}
 
-const S = {pts:seed(), draft:null, step:0, foot:'R', filter:null, doc:null, hubv:null, ref:null};
+const S = {pts:seed(), care:false, draft:null, step:0, foot:'R', filter:null, doc:null, hubv:null, ref:null};
 const P = id => S.pts.find(p=>p.id===id);
-const FAC = {A:'A透析クリニック',B:'B透析クリニック'};
+const FAC = {A:'A透析クリニック',B:'B透析クリニック',C:'C透析クリニック'};
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const md = d => d ? `${+d.slice(5,7)}/${+d.slice(8,10)}` : '―';
 const cat = (c,big) => `<span class="cat ${c||'none'} ${big?'big':''}">${c||'?'}</span>`;
@@ -86,6 +139,7 @@ function nav(cur){
   const items=[['list','一覧','#1f6f8b',0],['input','入力','#1f6f8b',0],['doctor','判定','#7c3aed',nd],['hub','福大の確認','#c2410c',nh],['referral','相談・紹介','#0f766e',0]];
   document.getElementById('nav').innerHTML = items.map(([k,t,c,n])=>
     `<a href="#${k}" class="${cur===k?'on':''}"><span class="dot" style="background:${c}"></span>${t}${n?`<span class="badge">${n}</span>`:''}</a>`).join('')
+    + `<span class="switch sm navsw ${S.care?'on':''}" data-a="care" role="switch" aria-checked="${S.care}"><i></i>${CARE_LABEL}</span>`
     + `<a href="guide.html" title="説明">？</a>`;
 }
 
@@ -127,8 +181,20 @@ function vPatient(id){
   const p=P(id); if(!p) return vList();
   return `<h2>${p.id} ${cat(p.cat,true)} <span class="sub">${FAC[p.fac]}　${p.B||''}</span></h2>
   <div class="bar" style="margin:0 0 14px;justify-content:flex-start"><a class="btn" href="#input/${p.id}">${ICON.cam.replace('<svg','<svg width="20" height="20"')} 観察を入力</a><a class="btn ghost" href="#referral/${p.id}">相談・紹介</a></div>
+  ${S.care&&p.cat?careCard(p):''}
   <div class="card"><div class="lbl" style="margin-top:0">区分の推移</div>${chart(p)}</div>
   <div class="card"><div class="lbl" style="margin-top:0">相談・紹介</div>${p.refs.length?p.refs.map(refTl).join('<hr style="border:none;border-top:1px solid var(--line)">'):'<p class="sub">なし</p>'}</div>`;
+}
+
+function careCard(p){
+  const lv = p.cat==='E' ? ['E'] : CATS.slice(0, CATS.indexOf(p.cat)+1);
+  const item = (c,t,ic) => `<li><span class="${ic}">${ic==='cdo'?'✓':'✕'}</span><span class="cat ${c} xs">${c}</span><span>${t}</span></li>`;
+  const bn = +String(p.B||'B0').slice(1);
+  const bg = CARE_B.filter(([n])=>bn>=n);
+  return `<div class="card carecard"><div class="lbl" style="margin-top:0">${CARE_LABEL}　${cat(p.cat)} ${p.B||''}</div>
+  <div class="care2"><div><h4 class="cdo">✓ 行うこと</h4><ul>${lv.flatMap(c=>CARE[c].do.map(t=>item(c,t,'cdo'))).join('')}</ul></div>
+  <div><h4 class="cno">✕ 行わないこと</h4><ul>${lv.flatMap(c=>CARE[c].no.map(t=>item(c,t,'cno'))).join('')}</ul></div></div>
+  <h4 style="margin:12px 0 4px">背景リスクに応じて</h4><ul class="careb">${bg.map(([,k,t])=>`<li><span class="tag">${k}</span><span>${t}</span></li>`).join('')}</ul></div>`;
 }
 
 /* ---------- 入力 ---------- */
@@ -259,7 +325,8 @@ function route(){
   const [v,arg]=(location.hash.slice(1)||'list').split('/');
   const V={list:vList,patient:vPatient,input:vInput,done:vDone,doctor:vDoctor,hub:vHub,referral:vReferral};
   nav(v==='patient'||v==='done'?'list':v);
-  document.getElementById('app').innerHTML=(V[v]||vList)(arg);
+  const band = S.care ? `<div class="careband"><b>${CARE_LABEL}</b>　研究期間中は表示しない機能の見本です。ケアは主治医が通常の診療として判断します。</div>` : '';
+  document.getElementById('app').innerHTML=band+(V[v]||vList)(arg);
 }
 const rerender=()=>{const y=scrollY;route();scrollTo(0,y);};
 const toggle=(arr,v)=>{const i=arr.indexOf(v); i<0?arr.push(v):arr.splice(i,1);};
@@ -268,6 +335,7 @@ document.addEventListener('click',e=>{
   const el=e.target.closest('[data-a]'); if(!el) return;
   const a=el.dataset.a, v=el.dataset.v, o=S.draft, x=o&&o[S.foot];
   switch(a){
+    case 'care': S.care=!S.care; break;
     case 'filter': S.filter=S.filter===v?null:v; break;
     case 'step': S.step=+v; break;
     case 'next': S.step=Math.min(S.step+1,STEPS.length-1); scrollTo(0,0); break;
